@@ -1,9 +1,13 @@
 # Compiled class file
 *.class
-
+.idea/
 # Log file
 *.log
-
+data-generator/data/*
+.DS_Store
+data-generator/.DS_Store
+data-generator/log.txt
+data-generator/streamer/__pycache__/
 # BlueJ files
 *.ctxt
 
