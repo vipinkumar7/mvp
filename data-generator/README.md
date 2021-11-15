@@ -14,8 +14,12 @@ if you need you can define another location in config with key `location`
 
 Design :
 
-Assuming Data-generator will read from file currently or any remote file system and fill queue.
-currently we have static data but same can be modified to read continuous data and fill app queue
+Read Data => Fill Queue [ one pipeline]
+Schedule  drain from Queue => DataSource [second pipeline]
+
+
+Assuming Data-generator will read from file currently or any remote file system and fill Queue .
+currently we have static data but same can be modified to read continuous data and fill app Queue.
 
 Queue can be drained to data source with specified interval
 
