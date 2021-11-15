@@ -10,7 +10,7 @@ setup(name='data-generator',
       license='MIT',
       packages=find_packages(),
       install_requires=[
-          'google-cloud-dataproc', 'google-cloud-monitoring', 'flask==1.1.1', 'cassandra-driver'
+          'google-cloud-dataproc', 'google-cloud-monitoring', 'flask==1.1.1', 'cassandra-driver', 'schedule'
       ],
       include_package_data=True,
       zip_safe=False)

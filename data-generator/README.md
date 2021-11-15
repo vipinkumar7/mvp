@@ -14,9 +14,9 @@ if you need you can define another location in config with key `location`
 
 Design :
 
-Read Data => Fill Queue [ one pipeline]
+Read Data => Fill Queue ( one pipeline)
 
-Schedule  drain from Queue => DataSource [second pipeline]
+Schedule  drain from Queue => DataSource(Cassandra) (second pipeline)
 
 
 Assuming Data-generator will read from file currently or any remote file system and fill Queue .
@@ -25,6 +25,8 @@ currently we have static data but same can be modified to read continuous data a
 Queue can be drained to data source with specified interval
 
 
+
+we need a cassandra Docker instance
 
 
 

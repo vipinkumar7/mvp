@@ -5,6 +5,7 @@ import pandas as pd
 from cassandra.cluster import Cluster
 from streamer.BlockingQueue import BlockingQueue
 from streamer.pojo import YoutubeStart
+from datetime import datetime
 
 
 class StreamUtil:
@@ -12,15 +13,29 @@ class StreamUtil:
     def __init__(self, interval, location):
         self._interval = interval
         self._location = location
-        # self.cluster = Cluster(['127.0.0.1'])
-        # self.cluster.connect('youtube_videos')
+        self.cluster = Cluster(['127.0.0.1'])
+        self.session = self.cluster.connect('youtube_videos')
         self._queue = BlockingQueue(200)
 
     def load_data(self):
         logging.info('draining queue ')
         item = self._queue.dequeue()
+        self.session.execute(
+            """
+            INSERT INTO users (video_id, trending_date, title, channel_title, category_id, publish_time, tags, views, 
+            likes, dislikes, comment_count, thumbnail_link, comments_disabled, ratings_disabled, 
+            video_error_or_removed, description, country)
+            VALUES (%s, %s, %s, %s, %s, %s, %s , %d, %d, %d, %d ,%s, %s, %s, %s, %s ,%s )
+            """,
+            (item.video_id, datetime.strptime(item.trending_date, '%y.%d.%m'), item.title, item.channel_title,
+             item.category_id, datetime.strptime(item.publish_time, '%Y-%m-%dT%H:%M:%S.%fZ'),
+             item.tags, int(item.views),
+             int(item.likes), int(item.dislikes), int(item.comment_count), item.thumbnail_link, item.comments_disabled,
+             item.ratings_disabled,
+             item.video_error_or_removed, item.description, item.country)
+        )
         print(item)
-        logging.info("item drained" )
+        logging.info("item drained")
 
     def start(self):
         logging.info('Starting data generator')
@@ -44,5 +59,6 @@ class StreamUtil:
                                    row['comments_disabled'],
                                    row['ratings_disabled'],
                                    row['video_error_or_removed'],
-                                   row['description'])
+                                   row['description'],
+                                   csv[:2])
                 self._queue.enqueue(obj)

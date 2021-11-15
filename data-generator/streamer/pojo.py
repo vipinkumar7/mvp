@@ -19,3 +19,4 @@ class YoutubeStart:
     ratings_disabled: bool
     video_error_or_removed: bool
     description: str
+    country: str
