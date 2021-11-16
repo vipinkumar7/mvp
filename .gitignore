@@ -8,6 +8,9 @@ data-generator/data/*
 data-generator/.DS_Store
 data-generator/log.txt
 data-generator/streamer/__pycache__/
+query-service/__pycache__/
+query-service/controller/__pycache__/
+query-service/log.txt
 # BlueJ files
 *.ctxt
 
