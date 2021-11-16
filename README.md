@@ -1,4 +1,4 @@
 # mvp
 repo for different mvp tests
 
-![Screenshot](.arch.png)
+![Screenshot](arch.png)
