@@ -15,7 +15,7 @@ app = StreamUtil(stream_config["interval"], stream_config["location"])
 
 
 def drain_thread():
-    schedule.every(30).seconds.do(app.load_data)
+    schedule.every(5).seconds.do(app.load_data)
 
 
 def data_reader():

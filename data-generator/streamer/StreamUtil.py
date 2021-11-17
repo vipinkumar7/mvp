@@ -17,7 +17,7 @@ class StreamUtil:
         self._location = location
         self.cluster = Cluster(['127.0.0.1'])
         self.session = self.cluster.connect('youtube_videos')
-        self._queue = BlockingQueue(200)
+        self._queue = BlockingQueue(20000)
 
     @staticmethod
     def convert_bool(value):
