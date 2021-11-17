@@ -27,33 +27,34 @@ class StreamUtil:
 
     def load_data(self):
         logging.info('draining queue ')
-        item = self._queue.dequeue()
+        for i in range(1, self._queue.curr_size):
+            item = self._queue.dequeue()
 
-        insert_data = self.session.prepare(
-            'INSERT INTO youtube_videos.stats_data (video_id, trending_date, title, channel_title, '
-            'category_id, publish_time, tags, views, likes, dislikes, comment_count, thumbnail_link, '
-            'comments_disabled, ratings_disabled,video_error_or_removed, description, country) '
-            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?) ')
-        batch = BatchStatement(consistency_level=ConsistencyLevel.ANY)
-        try:
-            batch.add(insert_data,
-                      (str(item.video_id), datetime.strptime(item.trending_date, '%y.%d.%m'), str(item.title),
-                       str(item.channel_title),
-                       str(item.category_id), datetime.strptime(item.publish_time, '%Y-%m-%dT%H:%M:%S.%fZ'),
-                       str(item.tags), int(item.views),
-                       int(item.likes), int(item.dislikes), int(item.comment_count), str(item.thumbnail_link),
-                       StreamUtil.convert_bool(item.comments_disabled),
-                       StreamUtil.convert_bool(item.ratings_disabled),
-                       StreamUtil.convert_bool(item.video_error_or_removed),
-                       str(item.description), str(item.country)))
-            logging.info('Data Inserted into the table')
-            print(insert_data.query_string)
+            insert_data = self.session.prepare(
+                'INSERT INTO youtube_videos.stats_data (video_id, trending_date, title, channel_title, '
+                'category_id, publish_time, tags, views, likes, dislikes, comment_count, thumbnail_link, '
+                'comments_disabled, ratings_disabled,video_error_or_removed, description, country) '
+                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?) ')
+            batch = BatchStatement(consistency_level=ConsistencyLevel.ANY)
+            try:
+                batch.add(insert_data,
+                          (str(item.video_id), datetime.strptime(item.trending_date, '%y.%d.%m'), str(item.title),
+                           str(item.channel_title),
+                           str(item.category_id), datetime.strptime(item.publish_time, '%Y-%m-%dT%H:%M:%S.%fZ'),
+                           str(item.tags), int(item.views),
+                           int(item.likes), int(item.dislikes), int(item.comment_count), str(item.thumbnail_link),
+                           StreamUtil.convert_bool(item.comments_disabled),
+                           StreamUtil.convert_bool(item.ratings_disabled),
+                           StreamUtil.convert_bool(item.video_error_or_removed),
+                           str(item.description), str(item.country)))
+                logging.info('Data Inserted into the table')
+                print(insert_data.query_string)
 
-        except Exception as e:
-            logging.info('The cassandra error: {}'.format(e))
-        self.session.execute(batch)
-        print(item)
-        logging.info("item drained")
+            except Exception as e:
+                logging.info('The cassandra error: {}'.format(e))
+            self.session.execute(batch)
+            print(item)
+            logging.info("item drained")
 
     def start(self):
         logging.info('Starting data generator')

@@ -23,15 +23,37 @@ def pandas_factory(colnames, rows):
     return pd.DataFrame(rows, columns=colnames)
 
 
-@app.route("/top_likes/<date>")
-def get_top_likes(date):
+def compute_percentage(views, likes):
+    h = int((likes / views) * 100)
+    return h
+
+
+@app.route("/top_likes/<country>/<date>")
+def get_top_likes(country, date):
     session = get_db()
     session.row_factory = pandas_factory
     session.default_fetch_size = None
-    query = "select  video_id, likes  from stats_data where country='MX' and " \
-            "trending_date = " + "'" + date + "'"
+    query = "select  video_id, likes  from stats_data where country='" + country + "' and " \
+                                                                                   "trending_date = '" + date + "'"
     print(query)
     result = session.execute(query)
     df = result._current_rows
     df1 = df.sort_values(by=['likes'], ascending=False)
     return "<p>" + str(df1.iloc[0]) + "</p>"
+
+
+@app.route("/top_per/<country>/<date>")
+def get_top_liked_percentage(country, date):
+    session = get_db()
+    session.row_factory = pandas_factory
+    session.default_fetch_size = None
+    query = "select  video_id, views,likes  from stats_data where country='" + \
+            country + "' and trending_date = '" + date + "'"
+    print(query)
+    result = session.execute(query)
+    df = result._current_rows
+    df['percent'] = df.apply(lambda x: compute_percentage(x['views'], x['likes']), axis=1)
+    print(df)
+    df1 = df.sort_values(by=['percent'], ascending=False)
+    return "<p>" + str(df1.iloc[0]) + "</p>"
+
